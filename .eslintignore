@@ -2,6 +2,7 @@
 **/node_modules
 **/bower_components
 **/lib
-**/public/built.js
+**/built.js
+**/built.min.js
 **/dist
 Gruntfile.js

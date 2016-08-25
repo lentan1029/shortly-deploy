@@ -13,7 +13,7 @@ module.exports = function(grunt) {
           '!public/client/router.js',
           'public/lib/*.js',
           'public/client/router.js'],
-        dest: 'public/built.js',
+        dest: 'public/dist/built.js',
       }
     },
 
@@ -38,26 +38,21 @@ module.exports = function(grunt) {
     uglify: {
       my_target: {
         files: {
-          'public/built.min.js': ['public/built.js']
+          'public/dist/built.min.js': ['public/dist/built.js']
         }
       }
     },
 
-    eslint: {
-      target: [
-        // Add list of files to lint here
-        'app',
-        'lib',
-        'public',
-        'test',
-        'views'
-      ],
-      options: {
-        maxWarnings: 0
-      }
-    },
-
     cssmin: {
+      options: {
+        shorthandCompacting: false,
+        roundingPrecision: -1
+      },
+      target: {
+        files: {
+          'public/dist/style.min.css': ['public/style.css']
+        }
+      }
     },
 
     watch: {
@@ -76,18 +71,25 @@ module.exports = function(grunt) {
       }
     },
 
+    eslint: {
+      src: ['test/*.js', 'public/client/*.js', 'public/lib/*.js', 'lib/*.js']
+    },
+
     shell: {
       prodServer: {
         command: 'git push live master'
       }
     },
+
+    clean: ['public/dist/built.js', 'public/dist/built.min.js', 'public/dist/style.min.css']
   });
 
+  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
-  grunt.loadNpmTasks('grunt-eslint');
+  grunt.loadNpmTasks('gruntify-eslint');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-nodemon');
@@ -107,6 +109,8 @@ module.exports = function(grunt) {
 
   grunt.registerTask('build', [
     'eslint',
+    'clean',
+    'cssmin',
     'concat',
     'uglify',
     'test',
@@ -130,9 +134,8 @@ module.exports = function(grunt) {
         'upload'
       ]);
     } else {
-      grunt.task.run(['upload']);
+      grunt.task.run(['build']);
     }
   });
-
 
 };
