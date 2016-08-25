@@ -31,6 +31,9 @@ module.exports = function(grunt) {
 
     nodemon: {
       dev: {
+        options: {
+          nodeArgs: ['']
+        },
         script: 'server.js'
       }
     },
@@ -95,7 +98,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-nodemon');
 
   grunt.registerTask('server-dev', function (target) {
-    grunt.task.run([ 'nodemon', 'watch' ]);
+    if (grunt.option('debug')) {
+      grunt.config('nodemon.dev.options.nodeArgs', '--debug');
+      grunt.task.run([ 'nodemon', 'watch' ]);
+    } else {
+      grunt.config('nodemon.dev.options.nodeArgs', '');
+      grunt.task.run([ 'nodemon', 'watch' ]);
+    }
   });
 
 
